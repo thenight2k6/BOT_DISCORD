@@ -4,7 +4,7 @@ import os
 from keep_alive import keep_alive
 
 TOKEN = os.getenv("TOKEN")
-VOICE_CHANNEL_ID = int(os.getenv("1408816880730247329"))  # đặt ID voice channel trong Render
+VOICE_CHANNEL_ID = int(os.getenv("VOICE_CHANNEL_ID", "0"))  # đặt ID voice channel trong Render
 
 intents = discord.Intents.default()
 client = discord.Client(intents=intents)
