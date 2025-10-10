@@ -1,34 +1,27 @@
 import discord
 import asyncio
 import os
+from keep_alive import keep_alive
 
-TOKEN = os.getenv("TOKEN")  # Lấy token từ Render environment variable
-VOICE_CHANNEL_ID = int(os.getenv("1408816880730247329"))  # ID kênh voice
+TOKEN = os.getenv("TOKEN")
+VOICE_CHANNEL_ID = int(os.getenv("1408816880730247329"))  # đặt ID voice channel trong Render
 
 intents = discord.Intents.default()
 client = discord.Client(intents=intents)
+
 @client.event
 async def on_ready():
     print(f"✅ Logged in as {client.user}")
-    # Kết nối voice channel
+
     channel = client.get_channel(VOICE_CHANNEL_ID)
     if channel and isinstance(channel, discord.VoiceChannel):
         try:
             await channel.connect()
-            print(f"🔊 Joined voice channel: {channel.name}")
-        except discord.ClientException:
-            print("⚠️ Already connected to a voice channel.")
+            print(f"🎧 Joined voice channel: {channel.name}")
+        except Exception as e:
+            print(f"⚠️ Could not join channel: {e}")
     else:
-        print("❌ Voice channel not found! Check the ID or bot permissions.")
-# Giữ bot chạy (loop vô hạn)
-async def keep_alive_loop():
-    while True:
-        await asyncio.sleep(60)
-@client.event
-async def on_disconnect():
-    print("⚠️ Bot disconnected! Render sẽ tự restart.")
-async def main():
-    async with client:
-        await asyncio.gather(client.start(TOKEN), keep_alive_loop())
-if __name__ == "__main__":
-    asyncio.run(main())
+        print("⚠️ Voice channel not found or invalid ID!")
+
+keep_alive()
+client.run(TOKEN)
