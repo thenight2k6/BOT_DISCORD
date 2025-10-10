@@ -9,7 +9,7 @@ logging.basicConfig(level=logging.INFO)
 log = logging.getLogger("bot_hold")
 
 TOKEN = os.getenv("DISCORD_BOT_TOKEN")
-VOICE_CHANNEL_ID = os.getenv("VOICE_CHANNEL_ID")  # ví dụ "123456789012345678"
+VOICE_CHANNEL_ID = os.getenv("1408816880730247329")  # ví dụ "123456789012345678"
 
 if not TOKEN or not VOICE_CHANNEL_ID:
     log.error("Env vars DISCORD_BOT_TOKEN và VOICE_CHANNEL_ID phải được thiết lập.")
@@ -86,3 +86,4 @@ def main():
 
 if __name__ == "__main__":
     main()
+
