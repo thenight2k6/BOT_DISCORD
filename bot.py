@@ -1,8 +1,9 @@
 import discord
 import asyncio
 from keep_alive import keep_alive
+import os
 
-TOKEN = "YOUR_BOT_TOKEN_HERE"
+TOKEN = os.getenv("TOKEN")
 VOICE_CHANNEL_ID = 1408816880730247329  # thay ID voice channel của bạn
 
 intents = discord.Intents.default()
@@ -20,3 +21,4 @@ async def on_ready():
 
 keep_alive()  # khởi động web server keep-alive
 client.run(TOKEN)
+
