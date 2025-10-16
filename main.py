@@ -13,7 +13,7 @@ CHANNEL_ID = 1408816880730247329
 SELF_MUTE = True
 SELF_DEAF = False
 
-usertoken = os.getenv("TOKEN")
+usertoken = "MTQxNDMxMzk5NDY4ODEzOTQ3NA.GA39-s.nQklIDprV4KfKOI18Vje8Gun93ivtbgb8EfJps"
 if not usertoken:
   print("[ERROR] Please add a token inside Secrets.")
   sys.exit()
@@ -51,4 +51,5 @@ def run_joiner():
 
 keep_alive()
 run_joiner()
+
 
