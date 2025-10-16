@@ -1,57 +1,51 @@
 import os
-import sys
-import json
-import time
-import requests
-import websocket
+import discord
+from discord.ext import commands
 from keep_alive import keep_alive
 
-status = "online" #online/dnd/idle
+# ====== CONFIG ======
+GUILD_ID = 1410339152586870866      # ID server của bạn
+CHANNEL_ID = 1410424054481027204    # ID voice channel
+TOKEN = os.environ.get("TOKEN")      # Lấy từ Environment Variables trên Render
 
-GUILD_ID = 1410339152586870866
-CHANNEL_ID = 1410424054481027204
-SELF_MUTE = True
-SELF_DEAF = False
+if not TOKEN:
+    print("[ERROR] Please add a bot TOKEN inside Environment Variables.")
+    raise SystemExit
 
-usertoken = os.environ.get("TOKEN")
-if not usertoken:
-  print("[ERROR] Please add a token inside Secrets.")
-  sys.exit()
+# ====== BOT SETUP ======
+intents = discord.Intents.default()
+bot = commands.Bot(command_prefix="!", intents=intents)
 
-headers = {"Authorization": usertoken, "Content-Type": "application/json"}
+@bot.event
+async def on_ready():
+    print(f"✅ Logged in as {bot.user} (ID: {bot.user.id})")
 
-validate = requests.get('https://canary.discordapp.com/api/v9/users/@me', headers=headers)
-if validate.status_code != 200:
-  print("[ERROR] Your token might be invalid. Please check it again.")
-  sys.exit()
+    guild = bot.get_guild(GUILD_ID)
+    if not guild:
+        print(f"[ERROR] Guild with ID {GUILD_ID} not found.")
+        return
 
-userinfo = requests.get('https://canary.discordapp.com/api/v9/users/@me', headers=headers).json()
-username = userinfo["username"]
-discriminator = userinfo["discriminator"]
-userid = userinfo["id"]
+    channel = guild.get_channel(CHANNEL_ID)
+    if not channel or not isinstance(channel, discord.VoiceChannel):
+        print(f"[ERROR] Channel with ID {CHANNEL_ID} not found or not a voice channel.")
+        return
 
-def joiner(token, status):
-    ws = websocket.WebSocket()
-    ws.connect('wss://gateway.discord.gg/?v=9&encoding=json')
-    start = json.loads(ws.recv())
-    heartbeat = start['d']['heartbeat_interval']
-    auth = {"op": 2,"d": {"token": token,"properties": {"$os": "Windows 10","$browser": "Google Chrome","$device": "Windows"},"presence": {"status": status,"afk": False}},"s": None,"t": None}
-    vc = {"op": 4,"d": {"guild_id": GUILD_ID,"channel_id": CHANNEL_ID,"self_mute": SELF_MUTE,"self_deaf": SELF_DEAF}}
-    ws.send(json.dumps(auth))
-    ws.send(json.dumps(vc))
-    time.sleep(heartbeat / 1000)
-    ws.send(json.dumps({"op": 1,"d": None}))
+    # Nếu bot chưa ở trong kênh thoại → vào
+    if not guild.voice_client:
+        await channel.connect()
+        print(f"🎧 Joined voice channel: {channel.name}")
+    else:
+        print("ℹ️ Already connected to a voice channel.")
 
-def run_joiner():
-  os.system("clear")
-  print(f"Logged in as {username}#{discriminator} ({userid}).")
-  while True:
-    joiner(usertoken, status)
-    time.sleep(30)
+@bot.event
+async def on_disconnect():
+    print("⚠️ Bot disconnected from Discord!")
 
+# ====== KEEP ALIVE ======
 keep_alive()
-run_joiner()
 
-
-
-
+# ====== RUN BOT ======
+try:
+    bot.run(TOKEN)
+except discord.LoginFailure:
+    print("[ERROR] Invalid token. Please double-check your bot token.")
