@@ -8,12 +8,12 @@ from keep_alive import keep_alive
 
 status = "online" #online/dnd/idle
 
-GUILD_ID = 893837965971828777
-CHANNEL_ID = 1408816880730247329
+GUILD_ID = 1410339152586870866
+CHANNEL_ID = 1410424054481027204
 SELF_MUTE = True
 SELF_DEAF = False
 
-usertoken = ""
+usertoken = os.environ.get("TOKEN")
 if not usertoken:
   print("[ERROR] Please add a token inside Secrets.")
   sys.exit()
@@ -51,6 +51,7 @@ def run_joiner():
 
 keep_alive()
 run_joiner()
+
 
 
 
